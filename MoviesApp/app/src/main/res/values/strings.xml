@@ -1,5 +1,5 @@
 <resources>
     <string name="app_name">Movies App</string>
-    <string name="tab_text_1">Tab 1</string>
-    <string name="tab_text_2">Tab 2</string>
+    <string name="new_movies">New movies</string>
+    <string name="favorites">My favorite</string>
 </resources>
