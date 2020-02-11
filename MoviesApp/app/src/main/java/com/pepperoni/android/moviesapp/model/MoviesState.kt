@@ -5,6 +5,8 @@ import com.airbnb.mvrx.MvRxState
 import com.airbnb.mvrx.Uninitialized
 
 data class MoviesState(
-    val quizzes: Async<List<Movie>> = Uninitialized
+    val movies: Async<List<Movie>> = Uninitialized
 ): MvRxState
-{}
+{
+
+}

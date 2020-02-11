@@ -1,5 +1,8 @@
 <resources>
     <string name="app_name">Movies App</string>
-    <string name="new_movies">New movies</string>
+    <string name="now_playing">Now playing</string>
     <string name="favorites">My favorite</string>
+    <string name="search_film_hint">Search film…</string>
+    <string name="movie_poster_description">Movie poster</string>
+    <string name="load_more">more</string>
 </resources>

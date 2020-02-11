@@ -2,5 +2,8 @@
 <resources>
     <string name="app_name">Movies App</string>
     <string name="favorites">Polubione</string>
-    <string name="new_movies">Filmy</string>
+    <string name="now_playing">Teraz grane</string>
+    <string name="search_film_hint">Szukaj filmu…</string>
+    <string name="movie_poster_description">Plakat filmu</string>
+    <string name="load_more">więcej</string>
 </resources>
