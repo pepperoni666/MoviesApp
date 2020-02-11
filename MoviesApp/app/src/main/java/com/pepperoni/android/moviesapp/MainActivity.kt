@@ -1,16 +1,17 @@
 package com.pepperoni.android.moviesapp
 
-import android.graphics.Color
 import android.os.Bundle
 import android.view.View
-import android.widget.ImageView
 import androidx.core.content.ContextCompat
 import com.airbnb.mvrx.BaseMvRxActivity
+import com.google.android.material.tabs.TabLayout
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : BaseMvRxActivity() {
 
     private var isSearching = false
+
+    var scrollUpListener: (() -> Unit)? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -22,6 +23,14 @@ class MainActivity : BaseMvRxActivity() {
             )
         view_pager.adapter = sectionsPagerAdapter
         tabs.setupWithViewPager(view_pager)
+        tabs.addOnTabSelectedListener(object: TabLayout.OnTabSelectedListener {
+            override fun onTabReselected(tab: TabLayout.Tab?) {
+                scrollUpListener?.let { it() }
+            }
+            override fun onTabUnselected(tab: TabLayout.Tab?) {}
+            override fun onTabSelected(tab: TabLayout.Tab?) {}
+
+        })
         search_icon.setOnClickListener {
             if(isSearching){
                 closeSearching()
@@ -37,6 +46,7 @@ class MainActivity : BaseMvRxActivity() {
             search_text_box.visibility = View.VISIBLE
             app_bar_title.visibility = View.GONE
             tabs.visibility = View.GONE
+            view_pager.visibility = View.INVISIBLE
             app_bar_layout.setBackgroundColor(
                 ContextCompat.getColor(
                     applicationContext,
@@ -54,6 +64,7 @@ class MainActivity : BaseMvRxActivity() {
             search_text_box.visibility = View.GONE
             app_bar_title.visibility = View.VISIBLE
             tabs.visibility = View.VISIBLE
+            view_pager.visibility = View.VISIBLE
             app_bar_layout.setBackgroundColor(
                 ContextCompat.getColor(
                     applicationContext,

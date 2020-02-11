@@ -10,7 +10,9 @@ import com.airbnb.mvrx.BaseMvRxFragment
 import com.airbnb.mvrx.Loading
 import com.airbnb.mvrx.activityViewModel
 import com.airbnb.mvrx.withState
+import com.pepperoni.android.moviesapp.MainActivity
 import com.pepperoni.android.moviesapp.R
+import com.pepperoni.android.moviesapp.model.MoviesState
 import com.pepperoni.android.moviesapp.viewmodel.MoviesViewModel
 import com.pepperoni.android.moviesapp.views.filmRow
 import kotlinx.android.synthetic.main.fragment_main.*
@@ -18,9 +20,9 @@ import kotlinx.android.synthetic.main.fragment_main.*
 /**
  * A placeholder fragment containing a simple view.
  */
-class NowPlayingFragment : BaseMvRxFragment() {
+open class NowPlayingFragment : BaseMvRxFragment() {
 
-    private val moviesViewModel: MoviesViewModel by activityViewModel()
+    protected val moviesViewModel: MoviesViewModel by activityViewModel()
 
     override fun invalidate() = withState(moviesViewModel) { state ->
         swipe_refresh.isRefreshing = state.movies is Loading
@@ -29,11 +31,13 @@ class NowPlayingFragment : BaseMvRxFragment() {
                 filmRow {
                     id(movie.id)
                     movie(movie)
+                    starVisibility(View.VISIBLE)
+                    isFavorite(movie.isFavorite)
                     clickListener { _ ->
-//                        findNavController().navigate(
-//                            R.id.action_quizzesFragment_to_solvingFragment,
-//                            SolvingFragment.arg(movie.id)
-//                        )
+
+                    }
+                    starClickListener { _ ->
+                        moviesViewModel.changeIsFavoriteFlag(movie.id)
                     }
                 }
             }
@@ -47,17 +51,17 @@ class NowPlayingFragment : BaseMvRxFragment() {
         return inflater.inflate(R.layout.fragment_main, container, false)
     }
 
-    override fun onStart() {
-        super.onStart()
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         swipe_refresh.setOnRefreshListener {
-            //moviesViewModel.refresh()
+            moviesViewModel.refresh()
         }
-//        return_top_btn.setOnClickListener {
-//            quizzesRecyclerView.smoothScrollToPosition(0)
-//            return_top_btn.visibility = View.GONE
-//        }
+        (activity as? MainActivity)?.scrollUpListener = {
+            //TODO: scroll to top doesnt work
+            //moviesRecyclerView.smoothScrollToPosition(0)
+        }
         load_more_btn.setOnClickListener {
-            //moviesViewModel.loadMore()
+            moviesViewModel.loadMore()
             load_more_btn.visibility = View.GONE
         }
         moviesRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
@@ -70,11 +74,10 @@ class NowPlayingFragment : BaseMvRxFragment() {
 //                    return_top_btn.visibility = View.GONE
 //                } else {
 //                    return_top_btn.visibility = View.VISIBLE
+
                 //Show "load more" if view scrolled to its end
                 withState(moviesViewModel) { state ->
-                    if ((recyclerView.layoutManager as LinearLayoutManager)
-                            .findLastCompletelyVisibleItemPosition() == state.movies()?.count()?.minus(1)
-                    ) {
+                    if (makeLoadMoreButtonVisible(recyclerView, state)) {
                         load_more_btn.visibility = View.VISIBLE
                     } else {
                         load_more_btn.visibility = View.GONE
@@ -82,6 +85,20 @@ class NowPlayingFragment : BaseMvRxFragment() {
                 }
             }
         })
+    }
+
+    /**
+     * Check if recycleView is scrolled all the way down.
+     * @return - true for View.VISIBLE, false for View.GONE
+     */
+    protected open fun makeLoadMoreButtonVisible(
+        recyclerView: RecyclerView,
+        state: MoviesState
+    ): Boolean {
+        return (recyclerView.layoutManager as LinearLayoutManager)
+            .findLastCompletelyVisibleItemPosition() == state.movies()?.count()?.minus(
+            1
+        ) && state.movies !is Loading
     }
 
     companion object {

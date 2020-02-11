@@ -4,7 +4,6 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="8dp"
     android:foreground="?android:attr/selectableItemBackground"
     app:cardCornerRadius="8dp"
     android:layout_marginBottom="16dp"
@@ -15,7 +14,7 @@
         android:layout_height="match_parent">
 
         <ImageView
-            android:id="@+id/poster"
+            android:id="@+id/poster_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:contentDescription="@string/movie_poster_description"
@@ -32,9 +31,9 @@
             android:textColor="#ff222222"
             android:textSize="16sp"
             android:text="test"
-            app:layout_constraintStart_toEndOf="@id/poster"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"/>
+            android:minLines="2"
+            app:layout_constraintStart_toEndOf="@id/poster_view"
+            app:layout_constraintTop_toTopOf="parent"/>
 
         <TextView
             android:id="@+id/movie_release_date"
@@ -46,7 +45,7 @@
             android:textColor="#ff222222"
             android:textSize="16sp"
             android:text="20-03"
-            app:layout_constraintStart_toEndOf="@id/poster"
+            app:layout_constraintStart_toEndOf="@id/poster_view"
             app:layout_constraintTop_toBottomOf="@+id/movie_title"
             app:layout_constraintEnd_toStartOf="@+id/movie_vote"/>
 
@@ -60,9 +59,21 @@
             android:textColor="#ff222222"
             android:textSize="16sp"
             android:text="45"
-            app:layout_constraintStart_toEndOf="@id/poster"
+            app:layout_constraintStart_toEndOf="@id/poster_view"
             app:layout_constraintTop_toBottomOf="@+id/movie_title"
             app:layout_constraintEnd_toEndOf="parent"/>
+
+        <ImageView
+            android:id="@+id/star_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:contentDescription="@string/movie_star_description"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/movie_title"
+            app:srcCompat="@android:drawable/star_big_off"
+            android:visibility="gone"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
