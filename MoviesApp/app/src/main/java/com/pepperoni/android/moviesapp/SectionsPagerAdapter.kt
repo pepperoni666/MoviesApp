@@ -1,13 +1,14 @@
-package com.pepperoni.android.moviesapp.ui.main
+package com.pepperoni.android.moviesapp
 
 import android.content.Context
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
-import com.pepperoni.android.moviesapp.R
+import com.pepperoni.android.moviesapp.fragment.MyFavoriteFragment
+import com.pepperoni.android.moviesapp.fragment.NowPlayingFragment
 
 private val TAB_TITLES = arrayOf(
-    R.string.new_movies,
+    R.string.now_playing,
     R.string.favorites
 )
 
@@ -15,9 +16,10 @@ class SectionsPagerAdapter(private val context: Context, fm: FragmentManager) :
     FragmentPagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
 
     override fun getItem(position: Int): Fragment {
-        // getItem is called to instantiate the fragment for the given page.
-        // Return a PlaceholderFragment (defined as a static inner class below).
-        return PlaceholderFragment.newInstance()
+        return when (position) {
+            0 -> NowPlayingFragment.newInstance()
+            else -> MyFavoriteFragment.newInstance()
+        }
     }
 
     override fun getPageTitle(position: Int): CharSequence? {
