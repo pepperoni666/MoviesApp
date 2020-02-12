@@ -4,9 +4,10 @@ import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.airbnb.mvrx.*
+import com.pepperoni.android.moviesapp.MainActivity
 import com.pepperoni.android.moviesapp.fragment.BaseMovieListFragment
-import com.pepperoni.android.moviesapp.model.tabs.MoviesState
-import com.pepperoni.android.moviesapp.viewmodel.tabs.MoviesViewModel
+import com.pepperoni.android.moviesapp.model.MoviesState
+import com.pepperoni.android.moviesapp.viewmodel.MoviesViewModel
 import com.pepperoni.android.moviesapp.views.filmRow
 import kotlinx.android.synthetic.main.fragment_main.*
 
@@ -15,19 +16,19 @@ open class NowPlayingFragment : BaseMovieListFragment<MoviesState, MoviesViewMod
     override val viewModel: MoviesViewModel by activityViewModel()
 
     override fun invalidate() = withState(viewModel) { state ->
-        swipe_refresh.isRefreshing = state.movies is Loading
+        swipe_refresh.isRefreshing = state.nowPlaying is Loading
         moviesRecyclerView.withModels {
-            state.movies()?.forEach { movie ->
+            state.nowPlaying()?.forEach { movie ->
                 filmRow {
                     id(movie.id)
                     movie(movie)
                     starVisibility(View.VISIBLE)
                     isFavorite(movie.isFavorite)
                     clickListener { _ ->
-
+                        (activity as? MainActivity)?.openMovieDetailsActivity(movie)
                     }
                     starClickListener { _ ->
-                        viewModel.changeIsFavoriteFlag(movie.id)
+                        viewModel.changeIsFavoriteFlag(movie.copy(isFavorite = !movie.isFavorite))
                     }
                 }
             }
@@ -43,9 +44,9 @@ open class NowPlayingFragment : BaseMovieListFragment<MoviesState, MoviesViewMod
         state: MvRxState
     ): Boolean {
         return (recyclerView.layoutManager as LinearLayoutManager)
-            .findLastCompletelyVisibleItemPosition() == (state as MoviesState).movies()?.count()?.minus(
+            .findLastCompletelyVisibleItemPosition() == (state as MoviesState).nowPlaying()?.count()?.minus(
             1
-        ) && state.movies !is Loading
+        ) && state.nowPlaying !is Loading
     }
 
     override fun swipeRefresh() {

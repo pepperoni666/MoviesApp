@@ -2,6 +2,7 @@ package com.pepperoni.android.moviesapp.database
 
 import androidx.room.*
 import com.pepperoni.android.moviesapp.model.Movie
+import io.reactivex.Single
 
 @Dao
 interface MoviesDao {

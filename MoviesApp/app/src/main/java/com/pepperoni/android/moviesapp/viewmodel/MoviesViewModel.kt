@@ -1,13 +1,13 @@
-package com.pepperoni.android.moviesapp.viewmodel.tabs
+package com.pepperoni.android.moviesapp.viewmodel
 
 import com.airbnb.mvrx.Loading
 import com.airbnb.mvrx.MvRxViewModelFactory
 import com.airbnb.mvrx.Success
 import com.airbnb.mvrx.ViewModelContext
 import com.pepperoni.android.moviesapp.MoviesApp
-import com.pepperoni.android.moviesapp.model.tabs.MoviesState
-import com.pepperoni.android.moviesapp.repository.tabs.MoviesRepository
-import com.pepperoni.android.moviesapp.viewmodel.MvRxViewModel
+import com.pepperoni.android.moviesapp.model.Movie
+import com.pepperoni.android.moviesapp.model.MoviesState
+import com.pepperoni.android.moviesapp.repository.MoviesRepository
 import kotlinx.coroutines.launch
 
 class MoviesViewModel(
@@ -18,35 +18,50 @@ class MoviesViewModel(
     init {
         setState {
             copy(
-                movies = Loading(),
+                nowPlaying = Loading(),
                 favorites = Loading()
             )
         }
         moviesRepository.launch {
             val movieList = moviesRepository.getMoviesNowPlaying()
             setState {
-                copy(
-                    movies = Success(movieList),
-                    favorites = Success(movieList.filter { it.isFavorite })
-                )
+                copy(nowPlaying = Success(movieList))
+            }
+        }
+        moviesRepository.launch {
+            val favoriteList = moviesRepository.getFavorites()
+            setState {
+                copy(favorites = Success(favoriteList))
             }
         }
     }
 
-    fun changeIsFavoriteFlag(movieId: Int) = moviesRepository.launch {
+    fun searchQueryUpdated(query: String) {
         setState {
-            val movies = ArrayList(movies() ?: listOf())
-            val selectedMovie = movies.firstOrNull { it.id == movieId }
-            selectedMovie?.let {
-                it.isFavorite = !it.isFavorite
-                if (it.isFavorite)
-                    moviesRepository.db.moviesDao().insertFavorites(it)
-                else
-                    moviesRepository.db.moviesDao().deleteFavorites(it)
+            copy(searchSuggestedMovies = Loading())
+        }
+        moviesRepository.launch {
+            val movieList = moviesRepository.getSearch(query)
+            setState {
+                copy(searchSuggestedMovies = Success(movieList))
+            }
+        }
+    }
+
+    fun changeIsFavoriteFlag(movie: Movie) = moviesRepository.launch {
+        setState {
+            changeIsFavoriteFlagSearchResultItem(movie.id)
+            val favorites = ArrayList(favorites() ?: listOf())
+            if (movie.isFavorite) {
+                moviesRepository.db.moviesDao().insertFavorites(movie)
+                favorites.add(movie)
+            } else {
+                moviesRepository.db.moviesDao().deleteFavorites(movie)
+                favorites.remove(favorites.find { it.id == movie.id })
             }
             copy(
-                movies = Success(movies),
-                favorites = Success(movies.filter { it.isFavorite })
+                nowPlaying = Success(changeIsFavoriteFlagNowPlayingItem(movie.id)),
+                favorites = Success(favorites)
             )
         }
     }

@@ -1,12 +1,11 @@
 package com.pepperoni.android.moviesapp.fragment.tabs
 
 import android.view.View
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.airbnb.mvrx.Loading
 import com.airbnb.mvrx.MvRxState
 import com.airbnb.mvrx.withState
-import com.pepperoni.android.moviesapp.model.tabs.MoviesState
+import com.pepperoni.android.moviesapp.MainActivity
 import com.pepperoni.android.moviesapp.views.filmRow
 import kotlinx.android.synthetic.main.fragment_main.*
 
@@ -21,7 +20,7 @@ class MyFavoriteFragment: NowPlayingFragment() {
                     movie(movie)
                     starVisibility(View.INVISIBLE)
                     clickListener { _ ->
-
+                        (activity as? MainActivity)?.openMovieDetailsActivity(movie)
                     }
                 }
             }

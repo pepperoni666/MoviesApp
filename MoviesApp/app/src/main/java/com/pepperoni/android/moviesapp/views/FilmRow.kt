@@ -23,7 +23,7 @@ class FilmRow @JvmOverloads constructor(
     }
 
     @ModelProp
-    fun setMovie(movie: Movie){
+    fun setMovie(movie: Movie) {
         Picasso.with(context)
             .load("https://image.tmdb.org/t/p/w185" + movie.poster_path)
             .into(poster_view)
@@ -33,8 +33,8 @@ class FilmRow @JvmOverloads constructor(
     }
 
     @ModelProp
-    fun setStarVisibility(viewVisibility: Int){
-        star_view.visibility = when(viewVisibility){
+    fun setStarVisibility(viewVisibility: Int) {
+        star_view.visibility = when (viewVisibility) {
             View.VISIBLE -> viewVisibility
             View.INVISIBLE -> viewVisibility
             else -> View.GONE
@@ -42,12 +42,12 @@ class FilmRow @JvmOverloads constructor(
     }
 
     @ModelProp
-    fun setIsFavorite(isFavorite: Boolean){
-        star_view.setImageResource(if(isFavorite) android.R.drawable.star_big_on else android.R.drawable.star_big_off)
+    fun setIsFavorite(isFavorite: Boolean) {
+        star_view.setImageResource(if (isFavorite) android.R.drawable.star_big_on else android.R.drawable.star_big_off)
     }
 
     @CallbackProp
-    fun setStarClickListener(listener: OnClickListener?){
+    fun setStarClickListener(listener: OnClickListener?) {
         star_view.setOnClickListener(listener)
     }
 

@@ -1,6 +1,8 @@
 package com.pepperoni.android.moviesapp
 
+import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.view.inputmethod.InputMethodManager
@@ -13,14 +15,17 @@ import com.airbnb.mvrx.viewModel
 import com.airbnb.mvrx.withState
 import com.google.android.material.tabs.TabLayout
 import com.pepperoni.android.moviesapp.fragment.search.SearchResultFragment
-import com.pepperoni.android.moviesapp.model.search.SearchState
-import com.pepperoni.android.moviesapp.viewmodel.search.SearchViewModel
+import com.pepperoni.android.moviesapp.model.Movie
+import com.pepperoni.android.moviesapp.model.MoviesState
+import com.pepperoni.android.moviesapp.viewmodel.MoviesViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 
 
 class MainActivity : BaseMvRxActivity() {
 
-    private val searchViewModel: SearchViewModel by viewModel()
+    private val LAUNCH_DETAILS_ACTIVITY = 2233
+
+    private val moviesViewModel: MoviesViewModel by viewModel()
 
     var scrollUpListener: (() -> Unit)? = null
 
@@ -44,10 +49,10 @@ class MainActivity : BaseMvRxActivity() {
 
         })
         search_text_box.doOnTextChanged { text, start, count, after ->
-            searchViewModel.searchQueryUpdated(text.toString())
+            moviesViewModel.searchQueryUpdated(text.toString())
         }
         search_icon.setOnClickListener {
-            withState(searchViewModel) { state ->
+            withState(moviesViewModel) { state ->
                 if (state.isSearching) {
                     closeSearching(state)
                 } else {
@@ -55,15 +60,37 @@ class MainActivity : BaseMvRxActivity() {
                 }
             }
         }
-        withState(searchViewModel) { state ->
+        withState(moviesViewModel) { state ->
             if (state.isSearching) {
                 openSearching(state)
             }
         }
     }
 
+    fun openMovieDetailsActivity(movie: Movie) {
+        startActivityForResult(
+            MovieDetailsActivity.getIntent(applicationContext, movie),
+            LAUNCH_DETAILS_ACTIVITY
+        )
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (requestCode == LAUNCH_DETAILS_ACTIVITY) {
+            //RESULT_OK returned when isFavorite field changed
+            //and RESULT_CANCELED otherwise
+            if (resultCode == Activity.RESULT_OK) {
+                val movie =
+                    data?.getParcelableExtra<Movie>(MovieDetailsActivity.MOVIE_DETAILS_EXTRA)
+                movie?.let {
+                    moviesViewModel.changeIsFavoriteFlag(it)
+                }
+            }
+        }
+        super.onActivityResult(requestCode, resultCode, data)
+    }
+
     override fun onBackPressed() {
-        withState(searchViewModel) { state ->
+        withState(moviesViewModel) { state ->
             if (state.isSearching)
                 closeSearching(state)
             else
@@ -71,7 +98,7 @@ class MainActivity : BaseMvRxActivity() {
         }
     }
 
-    private fun openSearching(state: SearchState) {
+    private fun openSearching(state: MoviesState) {
         search_text_box.visibility = View.VISIBLE
         app_bar_title.visibility = View.GONE
         tabs.visibility = View.GONE
@@ -94,7 +121,7 @@ class MainActivity : BaseMvRxActivity() {
         state.isSearching = true
     }
 
-    private fun closeSearching(state: SearchState) {
+    private fun closeSearching(state: MoviesState) {
         search_text_box.visibility = View.GONE
         app_bar_title.visibility = View.VISIBLE
         tabs.visibility = View.VISIBLE
