@@ -6,5 +6,6 @@ import com.airbnb.mvrx.Uninitialized
 import com.pepperoni.android.moviesapp.model.Movie
 
 data class SearchState(
-    val searchSuggestedMovies: Async<List<Movie>> = Uninitialized
+    val searchSuggestedMovies: Async<List<Movie>> = Uninitialized,
+    var isSearching: Boolean = false
 ) : MvRxState

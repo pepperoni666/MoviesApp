@@ -39,7 +39,9 @@
                 android:visibility="gone"
                 android:theme="@style/ThemeOverlay.AppCompat.Light"
                 android:hint="@string/search_film_hint"
-                android:inputType="text"/>
+                android:inputType="text"
+                android:focusable="true"
+                android:focusableInTouchMode ="true"/>
 
             <ImageView
                 android:id="@+id/search_icon"
