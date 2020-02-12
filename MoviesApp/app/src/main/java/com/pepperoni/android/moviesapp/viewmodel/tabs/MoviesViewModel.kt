@@ -1,11 +1,12 @@
-package com.pepperoni.android.moviesapp.viewmodel
+package com.pepperoni.android.moviesapp.viewmodel.tabs
 
 import com.airbnb.mvrx.Loading
 import com.airbnb.mvrx.MvRxViewModelFactory
 import com.airbnb.mvrx.Success
 import com.airbnb.mvrx.ViewModelContext
-import com.pepperoni.android.moviesapp.model.MoviesState
-import com.pepperoni.android.moviesapp.repository.MoviesRepository
+import com.pepperoni.android.moviesapp.model.tabs.MoviesState
+import com.pepperoni.android.moviesapp.repository.tabs.MoviesRepository
+import com.pepperoni.android.moviesapp.viewmodel.MvRxViewModel
 import kotlinx.coroutines.launch
 
 class MoviesViewModel(
@@ -91,7 +92,10 @@ class MoviesViewModel(
             state: MoviesState
         ): MoviesViewModel? {
             //val moviesRepository = viewModelContext.app<MoviesApplication>().moviesRepository
-            return MoviesViewModel(state, MoviesRepository())
+            return MoviesViewModel(
+                state,
+                MoviesRepository()
+            )
         }
     }
 }

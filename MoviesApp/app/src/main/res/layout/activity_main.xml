@@ -31,14 +31,15 @@
                 android:textColor="@color/design_default_color_background"
                 android:textAppearance="@style/TextAppearance.Widget.AppCompat.Toolbar.Title" />
 
-            <EditText
+            <AutoCompleteTextView
                 android:id="@+id/search_text_box"
                 android:layout_width="0dp"
                 android:layout_height="?actionBarSize"
                 android:layout_weight="1"
                 android:visibility="gone"
                 android:theme="@style/ThemeOverlay.AppCompat.Light"
-                android:hint="@string/search_film_hint"/>
+                android:hint="@string/search_film_hint"
+                android:inputType="text"/>
 
             <ImageView
                 android:id="@+id/search_icon"
@@ -63,4 +64,11 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/search_results_placeholder"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="?actionBarSize"
+        android:visibility="gone"/>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

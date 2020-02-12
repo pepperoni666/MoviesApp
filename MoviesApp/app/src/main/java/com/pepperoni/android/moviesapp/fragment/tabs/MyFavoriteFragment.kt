@@ -1,17 +1,18 @@
-package com.pepperoni.android.moviesapp.fragment
+package com.pepperoni.android.moviesapp.fragment.tabs
 
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.airbnb.mvrx.Loading
+import com.airbnb.mvrx.MvRxState
 import com.airbnb.mvrx.withState
-import com.pepperoni.android.moviesapp.model.MoviesState
+import com.pepperoni.android.moviesapp.model.tabs.MoviesState
 import com.pepperoni.android.moviesapp.views.filmRow
 import kotlinx.android.synthetic.main.fragment_main.*
 
 class MyFavoriteFragment: NowPlayingFragment() {
 
-    override fun invalidate() = withState(moviesViewModel) { state ->
+    override fun invalidate() = withState(viewModel) { state ->
         swipe_refresh.isRefreshing = state.favorites is Loading
         moviesRecyclerView.withModels {
             state.favorites()?.forEach { movie ->
@@ -29,12 +30,13 @@ class MyFavoriteFragment: NowPlayingFragment() {
 
     override fun makeLoadMoreButtonVisible(
         recyclerView: RecyclerView,
-        state: MoviesState
+        state: MvRxState
     ): Boolean {
-        return (recyclerView.layoutManager as LinearLayoutManager)
-            .findLastCompletelyVisibleItemPosition() == state.favorites()?.count()?.minus(
-            1
-        ) && state.favorites !is Loading
+        return false
+//        return (recyclerView.layoutManager as LinearLayoutManager)
+//            .findLastCompletelyVisibleItemPosition() == (state as MoviesState).favorites()?.count()?.minus(
+//            1
+//        ) && state.favorites !is Loading
     }
 
     companion object {
