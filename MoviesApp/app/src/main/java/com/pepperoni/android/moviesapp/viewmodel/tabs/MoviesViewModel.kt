@@ -4,6 +4,7 @@ import com.airbnb.mvrx.Loading
 import com.airbnb.mvrx.MvRxViewModelFactory
 import com.airbnb.mvrx.Success
 import com.airbnb.mvrx.ViewModelContext
+import com.pepperoni.android.moviesapp.MoviesApp
 import com.pepperoni.android.moviesapp.model.tabs.MoviesState
 import com.pepperoni.android.moviesapp.repository.tabs.MoviesRepository
 import com.pepperoni.android.moviesapp.viewmodel.MvRxViewModel
@@ -23,14 +24,10 @@ class MoviesViewModel(
         }
         moviesRepository.launch {
             val movieList = moviesRepository.getMoviesNowPlaying()
-//            val list = if(moviesRepository.isDBEmpty())
-//                quizRepository.getQuizzes()
-//            else
-//                quizRepository.getSavedQuizzes()
             setState {
                 copy(
                     movies = Success(movieList),
-                    favorites = Success(listOf())
+                    favorites = Success(movieList.filter { it.isFavorite })
                 )
             }
         }
@@ -40,17 +37,16 @@ class MoviesViewModel(
         setState {
             val movies = ArrayList(movies() ?: listOf())
             val selectedMovie = movies.firstOrNull { it.id == movieId }
-            val favorites = ArrayList(favorites() ?: listOf())
             selectedMovie?.let {
                 it.isFavorite = !it.isFavorite
                 if (it.isFavorite)
-                    favorites.add(it)
+                    moviesRepository.db.moviesDao().insertFavorites(it)
                 else
-                    favorites.remove(it)
+                    moviesRepository.db.moviesDao().deleteFavorites(it)
             }
             copy(
                 movies = Success(movies),
-                favorites = Success(favorites)
+                favorites = Success(movies.filter { it.isFavorite })
             )
         }
     }
@@ -91,10 +87,10 @@ class MoviesViewModel(
             viewModelContext: ViewModelContext,
             state: MoviesState
         ): MoviesViewModel? {
-            //val moviesRepository = viewModelContext.app<MoviesApplication>().moviesRepository
+            val db = viewModelContext.app<MoviesApp>().db
             return MoviesViewModel(
                 state,
-                MoviesRepository()
+                MoviesRepository(db)
             )
         }
     }

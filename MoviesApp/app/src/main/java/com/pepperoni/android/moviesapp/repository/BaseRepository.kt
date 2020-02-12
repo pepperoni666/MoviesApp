@@ -1,5 +1,8 @@
 package com.pepperoni.android.moviesapp.repository
 
+import androidx.room.Room
+import com.pepperoni.android.moviesapp.database.MoviesDao
+import com.pepperoni.android.moviesapp.database.MoviesDatabase
 import com.squareup.okhttp.HttpUrl
 import com.squareup.okhttp.OkHttpClient
 import kotlinx.coroutines.CoroutineScope
@@ -10,11 +13,12 @@ open class BaseRepository : CoroutineScope by CoroutineScope(Dispatchers.IO) {
 
     protected val httpClient = OkHttpClient()
 
-    protected val preparedUrlBuilder: HttpUrl.Builder get() {
-        return HttpUrl.Builder()
-            .scheme("https")
-            .host("api.themoviedb.org")
-            .addPathSegment("3")
-            .addQueryParameter("api_key", apiKey)
-    }
+    protected val preparedUrlBuilder: HttpUrl.Builder
+        get() {
+            return HttpUrl.Builder()
+                .scheme("https")
+                .host("api.themoviedb.org")
+                .addPathSegment("3")
+                .addQueryParameter("api_key", apiKey)
+        }
 }
