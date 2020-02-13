@@ -46,11 +46,10 @@ class MovieDetailsActivity : AppCompatActivity() {
 
     override fun onBackPressed() {
         val intent = Intent()
-        if(isFavoriteChanged){
+        if (isFavoriteChanged) {
             intent.putExtra(MOVIE_DETAILS_EXTRA, movie)
             setResult(Activity.RESULT_OK, intent)
-        }
-        else{
+        } else {
             setResult(Activity.RESULT_CANCELED)
         }
         finish()

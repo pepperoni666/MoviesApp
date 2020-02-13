@@ -13,7 +13,7 @@ import com.pepperoni.android.moviesapp.MainActivity
 import com.pepperoni.android.moviesapp.R
 import kotlinx.android.synthetic.main.fragment_main.*
 
-abstract class BaseMovieListFragment<S: MvRxState, T: BaseMvRxViewModel<S>>: BaseMvRxFragment() {
+abstract class BaseMovieListFragment<S : MvRxState, T : BaseMvRxViewModel<S>> : BaseMvRxFragment() {
 
     abstract val viewModel: T
 

@@ -29,24 +29,32 @@ class MoviesViewModel(
         }
         moviesRepository.launch {
             val movieList = moviesRepository.getMoviesNowPlaying()
-            setState { copy(nowPlaying = Success(movieList)) }
+            setState {
+                copy(nowPlaying = Success(movieList))
+            }
         }
         moviesRepository.launch {
             val favoriteList = moviesRepository.getFavorites()
-            setState { copy(favorites = Success(favoriteList)) }
+            setState {
+                copy(favorites = Success(favoriteList))
+            }
         }
     }
 
     fun searchQueryUpdated(query: String) {
-        setState { copy(searchSuggestedMovies = Loading()) }
+        setState {
+            copy(searchSuggestedMovies = Loading())
+        }
         searchingJob?.let {
-            if(it.isActive){
+            if (it.isActive) {
                 it.cancel("newSearchQuery")
             }
         }
         searchingJob = moviesRepository.launch {
             val movieList = moviesRepository.getSearch(query)
-            setState { copy(searchSuggestedMovies = Success(movieList)) }
+            setState {
+                copy(searchSuggestedMovies = Success(movieList))
+            }
         }
     }
 
@@ -69,18 +77,26 @@ class MoviesViewModel(
     }
 
     fun refreshFavorites() {
-        setState { copy(favorites = Loading()) }
+        setState {
+            copy(favorites = Loading())
+        }
         moviesRepository.launch {
             val list = moviesRepository.getFavorites()
-            setState { copy(favorites = Success(list)) }
+            setState {
+                copy(favorites = Success(list))
+            }
         }
     }
 
     fun refreshNowPlaying() {
-        setState { copy(nowPlaying = Loading()) }
+        setState {
+            copy(nowPlaying = Loading())
+        }
         moviesRepository.launch {
             val list = moviesRepository.getMoviesNowPlaying()
-            setState { copy(nowPlaying = Success(list)) }
+            setState {
+                copy(nowPlaying = Success(list))
+            }
         }
     }
 

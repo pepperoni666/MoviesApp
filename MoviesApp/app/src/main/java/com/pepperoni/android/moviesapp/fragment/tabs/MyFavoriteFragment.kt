@@ -9,7 +9,7 @@ import com.pepperoni.android.moviesapp.MainActivity
 import com.pepperoni.android.moviesapp.views.filmRow
 import kotlinx.android.synthetic.main.fragment_main.*
 
-class MyFavoriteFragment: NowPlayingFragment() {
+class MyFavoriteFragment : NowPlayingFragment() {
 
     override fun invalidate() = withState(viewModel) { state ->
         swipe_refresh.isRefreshing = state.favorites is Loading
@@ -27,7 +27,7 @@ class MyFavoriteFragment: NowPlayingFragment() {
         }
     }
 
-    override fun swipeRefresh(){
+    override fun swipeRefresh() {
         viewModel.refreshFavorites()
     }
 

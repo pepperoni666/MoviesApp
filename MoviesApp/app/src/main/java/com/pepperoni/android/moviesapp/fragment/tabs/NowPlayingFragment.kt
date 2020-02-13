@@ -28,7 +28,9 @@ open class NowPlayingFragment : BaseMovieListFragment<MoviesState, MoviesViewMod
                         (activity as? MainActivity)?.openMovieDetailsActivity(movie)
                     }
                     starClickListener { _ ->
-                        viewModel.changeIsFavoriteFlag(movie.copy(isFavorite = !movie.isFavorite))
+                        viewModel.changeIsFavoriteFlag(
+                            movie.copy(isFavorite = !movie.isFavorite)
+                        )
                     }
                 }
             }
@@ -44,9 +46,9 @@ open class NowPlayingFragment : BaseMovieListFragment<MoviesState, MoviesViewMod
         state: MvRxState
     ): Boolean {
         return (recyclerView.layoutManager as LinearLayoutManager)
-            .findLastCompletelyVisibleItemPosition() == (state as MoviesState).nowPlaying()?.count()?.minus(
-            1
-        ) && state.nowPlaying !is Loading
+            .findLastCompletelyVisibleItemPosition() ==
+                (state as MoviesState).nowPlaying()?.count()?.minus(1) &&
+                state.nowPlaying !is Loading
     }
 
     override fun swipeRefresh() {

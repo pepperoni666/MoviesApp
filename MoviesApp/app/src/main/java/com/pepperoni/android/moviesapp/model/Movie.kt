@@ -13,9 +13,9 @@ data class Movie(
     @ColumnInfo(name = "id")
     var id: Int = 11111,
     @Ignore
-    val title:String = "",
+    val title: String = "",
     @Ignore
-    val overview:String = "",
+    val overview: String = "",
     @Ignore
     val poster_path: String = "",
     @Ignore

@@ -14,7 +14,6 @@ data class MoviesState(
     fun changeIsFavoriteFlagSearchResultItem(movieId: Int) {
         searchSuggestedMovies()?.firstOrNull { it.id == movieId }
             ?.let { it.isFavorite = !it.isFavorite }
-
     }
 
     fun changeIsFavoriteFlagNowPlayingItem(movieId: Int): List<Movie> {

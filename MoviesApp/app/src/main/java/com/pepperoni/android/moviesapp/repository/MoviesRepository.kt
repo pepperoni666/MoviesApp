@@ -12,14 +12,14 @@ import java.io.IOException
 
 class MoviesRepository(val db: MoviesDatabase) : CoroutineScope by CoroutineScope(Dispatchers.IO) {
 
-    companion object{
+    companion object {
 
         private const val imageBaseUrlWithoutSize = "https://image.tmdb.org/t/p/"
-//        private const val posterSize = "w45"
+        //        private const val posterSize = "w45"
 //        private const val posterSize = "w92"
 //        private const val posterSize = "w154"
         private const val posterSize = "w185"
-//        private const val posterSize = "w300"
+        //        private const val posterSize = "w300"
 //        private const val posterSize = "w500"
 //        private const val posterSize = "original"
 //        private const val backdropSize = "w300"
@@ -45,7 +45,7 @@ class MoviesRepository(val db: MoviesDatabase) : CoroutineScope by CoroutineScop
         }
 
     private var pagesLoaded = 0
-    private var maxPages = 1 //random but should be more than 0 to start downloading
+    private var maxPages = 1 //random for start but should be more than 0
 
     suspend fun getMoviesNowPlaying(): List<Movie> = withContext(Dispatchers.IO) {
         pagesLoaded = 0
@@ -53,10 +53,12 @@ class MoviesRepository(val db: MoviesDatabase) : CoroutineScope by CoroutineScop
         loadMoreForNowPlaying()
     }
 
-    suspend fun loadMoreForNowPlaying(): List<Movie> = withContext(Dispatchers.IO){
+    suspend fun loadMoreForNowPlaying(): List<Movie> = withContext(Dispatchers.IO) {
 
-        if(pagesLoaded >= maxPages)
+        if (pagesLoaded >= maxPages)
             return@withContext listOf<Movie>()
+        else
+            MoviesApp.showToast("No more to load", false)
 
         val favoriteMoviesId = db.moviesDao().getFavorites()
 
@@ -76,7 +78,9 @@ class MoviesRepository(val db: MoviesDatabase) : CoroutineScope by CoroutineScop
             val data = gson.fromJson(response.body().string(), MoviesResponse::class.java)
             pagesLoaded = data.page
             maxPages = data.total_pages
-            favoriteMoviesId.forEach{ fromBd -> data.results.firstOrNull{ fromBd.id == it.id }?.isFavorite = true}
+            favoriteMoviesId.forEach { fromBd ->
+                data.results.firstOrNull { fromBd.id == it.id }?.isFavorite = true
+            }
             return@withContext data.results
         }
         return@withContext listOf<Movie>()
@@ -148,7 +152,9 @@ class MoviesRepository(val db: MoviesDatabase) : CoroutineScope by CoroutineScop
         if (response.isSuccessful) {
             val gson = GsonBuilder().create()
             val data = gson.fromJson(response.body().string(), MoviesResponse::class.java)
-            favoriteMoviesId.forEach{ fromBd -> data.results.firstOrNull{ fromBd.id == it.id }?.isFavorite = true}
+            favoriteMoviesId.forEach { fromBd ->
+                data.results.firstOrNull { fromBd.id == it.id }?.isFavorite = true
+            }
             return@withContext data.results
         }
         return@withContext listOf<Movie>()
