@@ -113,7 +113,7 @@ class MainActivity : BaseMvRxActivity() {
                 R.color.design_default_color_background
             )
         )
-        search_icon.setColorFilter(R.color.colorPrimary)
+        search_icon.setImageResource(R.drawable.ic_search_black_24dp)
         search_text_box.requestFocus()
         val imm: InputMethodManager =
             getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
@@ -137,7 +137,7 @@ class MainActivity : BaseMvRxActivity() {
                 R.color.colorPrimary
             )
         )
-        search_icon.setColorFilter(R.color.design_default_color_background)
+        search_icon.setImageResource(R.drawable.ic_search_white_24dp)
         search_text_box.clearFocus()
         val imm: InputMethodManager =
             getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager

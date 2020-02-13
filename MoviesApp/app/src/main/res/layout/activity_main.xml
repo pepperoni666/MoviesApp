@@ -47,8 +47,7 @@
                 android:id="@+id/search_icon"
                 android:layout_width="wrap_content"
                 android:layout_height="?actionBarSize"
-                android:tint="@color/design_default_color_background"
-                app:srcCompat="@android:drawable/ic_menu_search"
+                app:srcCompat="@drawable/ic_search_white_24dp"
                 android:adjustViewBounds="true"/>
 
         </LinearLayout>

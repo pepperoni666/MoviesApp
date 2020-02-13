@@ -10,6 +10,7 @@ import com.airbnb.epoxy.ModelProp
 import com.airbnb.epoxy.ModelView
 import com.pepperoni.android.moviesapp.R
 import com.pepperoni.android.moviesapp.model.Movie
+import com.pepperoni.android.moviesapp.repository.MoviesRepository
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.film_raw.view.*
 
@@ -25,7 +26,7 @@ class FilmRow @JvmOverloads constructor(
     @ModelProp
     fun setMovie(movie: Movie) {
         Picasso.with(context)
-            .load("https://image.tmdb.org/t/p/w185" + movie.poster_path)
+            .load(MoviesRepository.posterBaseUrl + movie.poster_path)
             .into(poster_view)
         movie_title.text = movie.title
         movie_release_date.text = movie.release_date
@@ -43,7 +44,7 @@ class FilmRow @JvmOverloads constructor(
 
     @ModelProp
     fun setIsFavorite(isFavorite: Boolean) {
-        star_view.setImageResource(if (isFavorite) android.R.drawable.star_big_on else android.R.drawable.star_big_off)
+        star_view.setImageResource(if (isFavorite) R.drawable.ic_star_full_24dp else R.drawable.ic_star_border_black_24dp)
     }
 
     @CallbackProp

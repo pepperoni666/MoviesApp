@@ -4,11 +4,45 @@ import com.google.gson.GsonBuilder
 import com.pepperoni.android.moviesapp.MoviesApp
 import com.pepperoni.android.moviesapp.database.MoviesDatabase
 import com.pepperoni.android.moviesapp.model.Movie
+import com.squareup.okhttp.HttpUrl
+import com.squareup.okhttp.OkHttpClient
 import com.squareup.okhttp.Request
 import kotlinx.coroutines.*
 import java.io.IOException
 
-class MoviesRepository(db: MoviesDatabase) : BaseRepository(db) {
+class MoviesRepository(val db: MoviesDatabase) : CoroutineScope by CoroutineScope(Dispatchers.IO) {
+
+    companion object{
+
+        private const val imageBaseUrlWithoutSize = "https://image.tmdb.org/t/p/"
+//        private const val posterSize = "w45"
+//        private const val posterSize = "w92"
+//        private const val posterSize = "w154"
+        private const val posterSize = "w185"
+//        private const val posterSize = "w300"
+//        private const val posterSize = "w500"
+//        private const val posterSize = "original"
+//        private const val backdropSize = "w300"
+//        private const val backdropSize = "w780"
+        private const val backdropSize = "w1280"
+//        private const val backdropSize = "original"
+
+        val posterBaseUrl: String get() = "$imageBaseUrlWithoutSize$posterSize"
+        val backdropBaseUrl: String get() = "$imageBaseUrlWithoutSize$backdropSize"
+    }
+
+    private val apiKey = "529549b0138460ff02c40a3d40099222"
+
+    private val httpClient = OkHttpClient()
+
+    private val preparedUrlBuilder: HttpUrl.Builder
+        get() {
+            return HttpUrl.Builder()
+                .scheme("https")
+                .host("api.themoviedb.org")
+                .addPathSegment("3")
+                .addQueryParameter("api_key", apiKey)
+        }
 
     suspend fun getMoviesNowPlaying(): List<Movie> = withContext(Dispatchers.IO) {
         val favoriteMoviesId = db.moviesDao().getFavorites()

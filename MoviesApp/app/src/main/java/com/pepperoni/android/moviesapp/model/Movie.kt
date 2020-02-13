@@ -15,7 +15,11 @@ data class Movie(
     @Ignore
     val title:String = "",
     @Ignore
+    val overview:String = "",
+    @Ignore
     val poster_path: String = "",
+    @Ignore
+    val backdrop_path: String = "",
     @Ignore
     val release_date: String = "",
     @Ignore
@@ -28,6 +32,8 @@ data class Movie(
         parcel.readString() ?: "",
         parcel.readString() ?: "",
         parcel.readString() ?: "",
+        parcel.readString() ?: "",
+        parcel.readString() ?: "",
         parcel.readDouble(),
         parcel.readByte() != 0.toByte()
     )
@@ -35,7 +41,9 @@ data class Movie(
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeInt(id)
         parcel.writeString(title)
+        parcel.writeString(overview)
         parcel.writeString(poster_path)
+        parcel.writeString(backdrop_path)
         parcel.writeString(release_date)
         parcel.writeDouble(vote_average)
         parcel.writeByte(if (isFavorite) 1 else 0)

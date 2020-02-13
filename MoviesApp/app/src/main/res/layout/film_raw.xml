@@ -25,12 +25,14 @@
             android:id="@+id/movie_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
+            android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
-            android:textColor="#ff222222"
-            android:textSize="16sp"
-            android:text="test"
+            android:layout_marginBottom="8dp"
+            android:paddingEnd="25dp"
+            android:textColor="@color/colorText"
+            android:textSize="18sp"
+            android:textStyle="bold"
             android:minLines="2"
             app:layout_constraintStart_toEndOf="@id/poster_view"
             app:layout_constraintTop_toTopOf="parent"/>
@@ -42,11 +44,11 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
-            android:textColor="#ff222222"
+            android:layout_marginBottom="8dp"
+            android:textColor="@color/colorText"
             android:textSize="16sp"
-            android:text="20-03"
             app:layout_constraintStart_toEndOf="@id/poster_view"
-            app:layout_constraintTop_toBottomOf="@+id/movie_title"
+            app:layout_constraintBottom_toBottomOf="@+id/poster_view"
             app:layout_constraintEnd_toStartOf="@+id/movie_vote"/>
 
         <TextView
@@ -56,24 +58,25 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
-            android:textColor="#ff222222"
+            android:layout_marginBottom="8dp"
+            android:textColor="@color/colorText"
             android:textSize="16sp"
-            android:text="45"
             app:layout_constraintStart_toEndOf="@id/poster_view"
-            app:layout_constraintTop_toBottomOf="@+id/movie_title"
+            app:layout_constraintBottom_toBottomOf="@+id/poster_view"
             app:layout_constraintEnd_toEndOf="parent"/>
 
         <ImageView
             android:id="@+id/star_view"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="35dp"
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="8dp"
             android:contentDescription="@string/movie_star_description"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/movie_title"
-            app:srcCompat="@android:drawable/star_big_off"
-            android:visibility="gone"/>
+            app:layout_constraintBottom_toBottomOf="@+id/poster_view"
+            app:srcCompat="@drawable/ic_star_border_black_24dp"
+            android:visibility="gone"
+            android:adjustViewBounds="true"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -6,6 +6,8 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.pepperoni.android.moviesapp.model.Movie
+import com.pepperoni.android.moviesapp.repository.MoviesRepository
+import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_details.*
 
 class MovieDetailsActivity : AppCompatActivity() {
@@ -16,7 +18,15 @@ class MovieDetailsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_details)
+        actionBar?.setDisplayHomeAsUpEnabled(true)
         movie = intent.getParcelableExtra(MOVIE_DETAILS_EXTRA)
+        title_view.text = movie.title
+        Picasso.with(applicationContext)
+            .load(MoviesRepository.backdropBaseUrl + movie.backdrop_path)
+            .into(backdrop_view)
+        overview_text_view.text = movie.overview
+        movie_release_date.text = movie.release_date
+        movie_vote.text = movie.vote_average.toString()
         star_view.setOnClickListener {
             movie.isFavorite = !movie.isFavorite
             isFavoriteChanged = !isFavoriteChanged
@@ -26,7 +36,7 @@ class MovieDetailsActivity : AppCompatActivity() {
     }
 
     private fun setIsFavorite(isFavorite: Boolean) {
-        star_view.setImageResource(if (isFavorite) android.R.drawable.star_big_on else android.R.drawable.star_big_off)
+        star_view.setImageResource(if (isFavorite) R.drawable.ic_star_full_24dp else R.drawable.ic_star_border_black_24dp)
     }
 
     override fun onBackPressed() {
