@@ -15,6 +15,11 @@ class MovieDetailsActivity : AppCompatActivity() {
     private lateinit var movie: Movie
     private var isFavoriteChanged = false
 
+    override fun onSupportNavigateUp(): Boolean {
+        onBackPressed()
+        return false
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_details)
