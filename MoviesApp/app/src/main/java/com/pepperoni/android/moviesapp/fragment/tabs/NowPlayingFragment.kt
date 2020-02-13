@@ -50,11 +50,11 @@ open class NowPlayingFragment : BaseMovieListFragment<MoviesState, MoviesViewMod
     }
 
     override fun swipeRefresh() {
-        viewModel.refresh()
+        viewModel.refreshNowPlaying()
     }
 
     override fun loadMore() {
-        viewModel.loadMore()
+        viewModel.loadMoreOfNowPlaying()
     }
 
     companion object {

@@ -27,15 +27,15 @@ class MyFavoriteFragment: NowPlayingFragment() {
         }
     }
 
+    override fun swipeRefresh(){
+        viewModel.refreshFavorites()
+    }
+
     override fun makeLoadMoreButtonVisible(
         recyclerView: RecyclerView,
         state: MvRxState
     ): Boolean {
         return false
-//        return (recyclerView.layoutManager as LinearLayoutManager)
-//            .findLastCompletelyVisibleItemPosition() == (state as MoviesState).favorites()?.count()?.minus(
-//            1
-//        ) && state.favorites !is Loading
     }
 
     companion object {

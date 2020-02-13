@@ -8,12 +8,17 @@ import com.pepperoni.android.moviesapp.MoviesApp
 import com.pepperoni.android.moviesapp.model.Movie
 import com.pepperoni.android.moviesapp.model.MoviesState
 import com.pepperoni.android.moviesapp.repository.MoviesRepository
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.launch
 
 class MoviesViewModel(
     state: MoviesState,
     private val moviesRepository: MoviesRepository
 ) : MvRxViewModel<MoviesState>(state) {
+
+    private var searchingJob: Job? = null
 
     init {
         setState {
@@ -24,27 +29,24 @@ class MoviesViewModel(
         }
         moviesRepository.launch {
             val movieList = moviesRepository.getMoviesNowPlaying()
-            setState {
-                copy(nowPlaying = Success(movieList))
-            }
+            setState { copy(nowPlaying = Success(movieList)) }
         }
         moviesRepository.launch {
             val favoriteList = moviesRepository.getFavorites()
-            setState {
-                copy(favorites = Success(favoriteList))
-            }
+            setState { copy(favorites = Success(favoriteList)) }
         }
     }
 
     fun searchQueryUpdated(query: String) {
-        setState {
-            copy(searchSuggestedMovies = Loading())
-        }
-        moviesRepository.launch {
-            val movieList = moviesRepository.getSearch(query)
-            setState {
-                copy(searchSuggestedMovies = Success(movieList))
+        setState { copy(searchSuggestedMovies = Loading()) }
+        searchingJob?.let {
+            if(it.isActive){
+                it.cancel("newSearchQuery")
             }
+        }
+        searchingJob = moviesRepository.launch {
+            val movieList = moviesRepository.getSearch(query)
+            setState { copy(searchSuggestedMovies = Success(movieList)) }
         }
     }
 
@@ -66,35 +68,31 @@ class MoviesViewModel(
         }
     }
 
-    fun refresh() {
-//        setState {
-//            copy(
-//                movies = Loading(),
-//                favorites = Loading()
-//            )
-//        }
-//        quizRepository.launch {
-//            quizRepository.refreshLoadedCounter()
-//            quizRepository.dropAllLocal()
-//            val list = quizRepository.getQuizzes()
-//            setState {
-//                copy(
-//                    movies = Success(movies),
-//                    favorites = Success(favorites)
-//                )
-//            }
-//        }
+    fun refreshFavorites() {
+        setState { copy(favorites = Loading()) }
+        moviesRepository.launch {
+            val list = moviesRepository.getFavorites()
+            setState { copy(favorites = Success(list)) }
+        }
     }
 
-    fun loadMore() {
-//        quizRepository.launch {
-//            val list = quizRepository.getQuizzes()
-//            setState {
-//                val newQuizzes: ArrayList<Quiz> = ArrayList(quizzes()!!)
-//                newQuizzes.addAll(list)
-//                copy(quizzes = Success(newQuizzes))
-//            }
-//        }
+    fun refreshNowPlaying() {
+        setState { copy(nowPlaying = Loading()) }
+        moviesRepository.launch {
+            val list = moviesRepository.getMoviesNowPlaying()
+            setState { copy(nowPlaying = Success(list)) }
+        }
+    }
+
+    fun loadMoreOfNowPlaying() {
+        moviesRepository.launch {
+            val newMovies = moviesRepository.loadMoreForNowPlaying()
+            setState {
+                val allMovies: ArrayList<Movie> = ArrayList(nowPlaying() ?: listOf())
+                allMovies.addAll(newMovies)
+                copy(nowPlaying = Success(allMovies))
+            }
+        }
     }
 
     companion object : MvRxViewModelFactory<MoviesViewModel, MoviesState> {
