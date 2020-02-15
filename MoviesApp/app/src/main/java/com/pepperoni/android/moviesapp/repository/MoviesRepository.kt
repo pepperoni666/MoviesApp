@@ -58,10 +58,10 @@ class MoviesRepository(val db: MoviesDatabase) : CoroutineScope by CoroutineScop
 
     suspend fun loadMoreForNowPlaying(): List<Movie> = withContext(Dispatchers.IO) {
 
-        if (pagesLoaded >= maxPages)
-            return@withContext listOf<Movie>()
-        else
+        if (pagesLoaded >= maxPages) {
             MoviesApp.showToast("No more to load", false)
+            return@withContext listOf<Movie>()
+        }
 
         val favoriteMoviesId = db.moviesDao().getFavorites()
 
