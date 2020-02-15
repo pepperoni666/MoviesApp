@@ -8,9 +8,12 @@ import com.squareup.okhttp.HttpUrl
 import com.squareup.okhttp.OkHttpClient
 import com.squareup.okhttp.Request
 import kotlinx.coroutines.*
-import java.io.IOException
 
-class MoviesRepository(val db: MoviesDatabase) : CoroutineScope by CoroutineScope(Dispatchers.IO) {
+class MoviesRepository(val db: MoviesDatabase) : CoroutineScope by CoroutineScope(
+    CoroutineExceptionHandler { coroutineContext, throwable ->
+        MoviesApp.showToast("error occured", false)
+        println("Caught $throwable")
+    } + SupervisorJob() + Dispatchers.IO) {
 
     companion object {
 
@@ -72,18 +75,22 @@ class MoviesRepository(val db: MoviesDatabase) : CoroutineScope by CoroutineScop
             )
             .build()
 
-        val response = httpClient.newCall(request).execute()
-        if (response.isSuccessful) {
-            val gson = GsonBuilder().create()
-            val data = gson.fromJson(response.body().string(), MoviesResponse::class.java)
-            pagesLoaded = data.page
-            maxPages = data.total_pages
-            favoriteMoviesId.forEach { fromBd ->
-                data.results.firstOrNull { fromBd.id == it.id }?.isFavorite = true
+        var movieList = listOf<Movie>()
+
+        NetworkRequestHandler.handleNetworkRequest {
+            val response = httpClient.newCall(request).execute()
+            if (response.isSuccessful) {
+                val gson = GsonBuilder().create()
+                val data = gson.fromJson(response.body().string(), MoviesResponse::class.java)
+                pagesLoaded = data.page
+                maxPages = data.total_pages
+                favoriteMoviesId.forEach { fromBd ->
+                    data.results.firstOrNull { fromBd.id == it.id }?.isFavorite = true
+                }
+                movieList = data.results
             }
-            return@withContext data.results
         }
-        return@withContext listOf<Movie>()
+        return@withContext movieList
     }
 
     suspend fun getFavorites(): List<Movie> = withContext(Dispatchers.IO) {
@@ -91,45 +98,35 @@ class MoviesRepository(val db: MoviesDatabase) : CoroutineScope by CoroutineScop
 
         val favorites = java.util.Collections.synchronizedList(mutableListOf<Movie>())
 
-        try {
-            //set timeout for API response to 10s
-            withTimeout(10000) {
-                //every movie request will run asynchronously
-                val awaitItems = ArrayList<Deferred<Unit>>()
+        NetworkRequestHandler.handleNetworkRequest {
+            //every movie request will run asynchronously
+            val awaitItems = ArrayList<Deferred<Unit>>()
 
-                for (i: Movie in favoriteMoviesId) {
-                    awaitItems.add(async {
-                        val request = Request.Builder()
-                            .url(
-                                preparedUrlBuilder
-                                    .addPathSegment("movie")
-                                    .addPathSegment(i.id.toString())
-                                    .build()
-                            )
-                            .build()
+            for (i: Movie in favoriteMoviesId) {
+                awaitItems.add(async {
+                    val request = Request.Builder()
+                        .url(
+                            preparedUrlBuilder
+                                .addPathSegment("movie")
+                                .addPathSegment(i.id.toString())
+                                .build()
+                        )
+                        .build()
 
-                        val response = httpClient.newCall(request).execute()
-                        if (response.isSuccessful) {
-                            val gson = GsonBuilder().create()
-                            val data =
-                                gson.fromJson(response.body().string(), Movie::class.java)
-                            data.isFavorite = true
-                            favorites.add(data)
-                        }
-                    })
-                }
-
-                //waiting for every movie to load
-                for (i: Deferred<Unit> in awaitItems) {
-                    i.await()
-                }
+                    val response = httpClient.newCall(request).execute()
+                    if (response.isSuccessful) {
+                        val gson = GsonBuilder().create()
+                        val data =
+                            gson.fromJson(response.body().string(), Movie::class.java)
+                        data.isFavorite = true
+                        favorites.add(data)
+                    }
+                })
             }
 
-        } catch (e: TimeoutCancellationException) {
-            MoviesApp.showToast("Connection timeout", true)
-        } catch (e: IOException) {
-            e.message?.let {
-                MoviesApp.showToast(it, true)
+            //waiting for every movie to load
+            for (i: Deferred<Unit> in awaitItems) {
+                i.await()
             }
         }
         return@withContext favorites
@@ -148,16 +145,21 @@ class MoviesRepository(val db: MoviesDatabase) : CoroutineScope by CoroutineScop
             )
             .build()
 
-        val response = httpClient.newCall(request).execute()
-        if (response.isSuccessful) {
-            val gson = GsonBuilder().create()
-            val data = gson.fromJson(response.body().string(), MoviesResponse::class.java)
-            favoriteMoviesId.forEach { fromBd ->
-                data.results.firstOrNull { fromBd.id == it.id }?.isFavorite = true
+
+        var movieList = listOf<Movie>()
+
+        NetworkRequestHandler.handleNetworkRequest {
+            val response = httpClient.newCall(request).execute()
+            if (response.isSuccessful) {
+                val gson = GsonBuilder().create()
+                val data = gson.fromJson(response.body().string(), MoviesResponse::class.java)
+                favoriteMoviesId.forEach { fromBd ->
+                    data.results.firstOrNull { fromBd.id == it.id }?.isFavorite = true
+                }
+                movieList = data.results
             }
-            return@withContext data.results
         }
-        return@withContext listOf<Movie>()
+        return@withContext movieList
     }
 
 }
